@@ -27,7 +27,7 @@ def main(DATA_CLASSES_FILE,INPUT_CSV_FILE,OUTPUT_CSV_FILE):
             "image" : row["image"],
             "xmin"  : row["xmin"],
             "ymin"  : row["ymin"],
-            "xmax" 	: row["xmax"],
+            "xmax"  : row["xmax"],
             "ymax"  : row["ymax"],
             "label" : label
         })
