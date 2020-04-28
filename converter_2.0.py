@@ -1,56 +1,47 @@
 import csv
 from tqdm import tqdm
-
-input_file = csv.DictReader(open("input.csv"))
-output_file="out1.csv"
-list_data=[]
-LABEL_0='label0'
-LABEL_1='label1'
-LABEL_2='label2'
-LABEL_3='label3'
-LABEL_4='label4'
-LABEL_5='label5'
-LABEL_6='label6'
-LABEL_7='label7'
-LABEL_8='label8'
-LABEL_9='label9'
-
-for row in tqdm(input_file):
-    label=int(row["label"])
-    if label==0:
-        label=LABEL_0
-    elif label==1:
-        label=LABEL_1
-    elif label==2:
-        label=LABEL_2
-    elif label==3:
-        label=LABEL_3
-    elif label==4:
-        label=LABEL_4
-    elif label==5:
-        label=LABEL_5
-    elif label==6:
-        label=LABEL_6
-    elif label==7:
-        label=LABEL_7
-    elif label==8:
-        label=LABEL_8
-    elif label==9:
-        label=LABEL_9
-
-    list_data.append({
-        "image" : row["image"],
-        "xmin"  : row["xmin"],
-        "ymin"  : row["ymin"],
-        "xmax" 	: row["xmax"],
-        "ymax"  : row["ymax"],
-        "label" : label
-    })
+import argparse
 
 
+def get_classes(classes_path):
+    with open(classes_path) as f:
+        class_names = f.readlines()
+    class_names = [c.strip() for c in class_names]
+    return class_names
 
-with open(output_file,'w') as csvout:
-    writer=csv.DictWriter(csvout,fieldnames=["image","xmin","ymin","xmax","ymax","label"])
-    for data in list_data:
-        writer.writerow(data) 
 
+def main(DATA_CLASSES_FILE,INPUT_CSV_FILE,OUTPUT_CSV_FILE):
+    classes=get_classes(DATA_CLASSES_FILE)
+    input_file = csv.DictReader(open(INPUT_CSV_FILE))
+    list_data=[]
+    key=list(range(len(classes)))
+    data_dict=dict(zip(key,classes))
+
+    for row in tqdm(input_file):
+        label=int(row["label"])
+        for k, v in data_dict.items():
+            if label==k:
+                label=v
+
+        list_data.append({
+            "image" : row["image"],
+            "xmin"  : row["xmin"],
+            "ymin"  : row["ymin"],
+            "xmax" 	: row["xmax"],
+            "ymax"  : row["ymax"],
+            "label" : label
+        })
+
+    with open(OUTPUT_CSV_FILE,'w') as csvout:
+        writer=csv.DictWriter(csvout,fieldnames=["image","xmin","ymin","xmax","ymax","label"])
+        for data in list_data:
+            writer.writerow(data) 
+
+if __name__ == "__main__":
+
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--DATA_CLASSES_FILE", type=str, default="data_classes.txt", help="Input data classes file")
+    parser.add_argument("--INPUT_CSV_FILE", type=str, default="detect.csv", help="Input CSV file name")
+    parser.add_argument("--OUTPUT_CSV_FILE", type=str, default="out3.csv", help="Output CSV file name")
+    args = parser.parse_args()
+    main(args.DATA_CLASSES_FILE,args.INPUT_CSV_FILE,args.OUTPUT_CSV_FILE)
