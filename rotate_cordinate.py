@@ -38,6 +38,7 @@ def calculate_90(xmin,ymin,xmax,ymax,w,h):
     return nw_xmin,nw_ymin,nw_xmax,nw_ymax
 
 INFILE="indata.csv"
+OUTFILE="out_test.csv"
 '''
 csv_read=pd.read_csv("indata.csv")
 images=csv_read['image']
@@ -76,14 +77,50 @@ for row in tqdm(data_file):
         "label" : row["label"]
     })
 
-print(type(list_data))
-for dict_val in list_data:
+list_90=list_data.copy()
+list_180=list_data.copy()
+list_270=list_data.copy()
+for dict_val in list_90:
+    print(dict_val["image"])
     dict_val["image"]="90"+dict_val["image"]
     nw_xmin,nw_ymin,nw_xmax,nw_ymax=calculate_90(float(dict_val["xmin"]),float(dict_val["ymin"]),float(dict_val["xmax"]),float(dict_val["ymax"]),512,512)
     dict_val["xmin"]=str(nw_xmin)
     dict_val["ymin"]=str(nw_ymin)
     dict_val["xmax"]=str(nw_xmax)
     dict_val["ymax"]=str(nw_ymax)
-    print(dict_val["image"])
+with open(OUTFILE,'w') as csvout:
+    writer=csv.DictWriter(csvout,fieldnames=["image","xmin","ymin","xmax","ymax","label"])
+    for data in list_data:
+        writer.writerow(data) 
 
-print((list_data))
+for dict_val in list_180:
+    print(dict_val["image"])
+    dict_val["image"]="180"+dict_val["image"]
+    nw_xmin,nw_ymin,nw_xmax,nw_ymax=calculate_180(float(dict_val["xmin"]),float(dict_val["ymin"]),float(dict_val["xmax"]),float(dict_val["ymax"]),512,512)
+    dict_val["xmin"]=str(nw_xmin)
+    dict_val["ymin"]=str(nw_ymin)
+    dict_val["xmax"]=str(nw_xmax)
+    dict_val["ymax"]=str(nw_ymax)
+with open(OUTFILE,'a') as csvout:
+    writer=csv.DictWriter(csvout,fieldnames=["image","xmin","ymin","xmax","ymax","label"])
+    for data in list_data:
+        writer.writerow(data) 
+
+
+for dict_val in list_270:
+    print(dict_val["image"])
+    dict_val["image"]="270"+dict_val["image"]
+    nw_xmin,nw_ymin,nw_xmax,nw_ymax=calculate_270(float(dict_val["xmin"]),float(dict_val["ymin"]),float(dict_val["xmax"]),float(dict_val["ymax"]),512,512)
+    dict_val["xmin"]=str(nw_xmin)
+    dict_val["ymin"]=str(nw_ymin)
+    dict_val["xmax"]=str(nw_xmax)
+    dict_val["ymax"]=str(nw_ymax)
+with open(OUTFILE,'a') as csvout:
+    writer=csv.DictWriter(csvout,fieldnames=["image","xmin","ymin","xmax","ymax","label"])
+    for data in list_data:
+        writer.writerow(data) 
+
+
+#print((list_90))
+
+#print((list_180))
