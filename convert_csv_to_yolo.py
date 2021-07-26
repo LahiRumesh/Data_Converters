@@ -3,11 +3,12 @@ import argparse
 import os
 import cv2
 import shutil
+from tqdm import tqdm
 
 
 image_folder = "images"
-vott_csv = "augment_output.csv"
-output_folder = "yolo_train"
+vott_csv = "output.csv"
+output_folder = "yolo_data"
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
@@ -101,7 +102,7 @@ if __name__ == "__main__":
             output.write("\n")
 
     # write yolo data
-    for name in csv.image.unique():
+    for name in tqdm(csv.image.unique()):
         if FLAGS.copy_images:
             shutil.copy(os.path.join(FLAGS.image_folder, name), os.path.join(FLAGS.output_folder, name))
         with open(os.path.join(FLAGS.output_folder, os.path.splitext(name)[0]) + ".txt", "w") as output:
